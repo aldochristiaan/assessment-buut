@@ -1,5 +1,4 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     ext.kotlin_version = '2.2.0'
     repositories {
@@ -48,10 +47,10 @@ tasks.register('clean') {
 sonarqube {
     properties {
         property "sonar.host.url", "http://p-sonarqube.nl.eu.abnamro.com:9000"
-        property "sonar.projectName", "Android - Reference App"
+        property "sonar.projectName", "BUUT Assessment Application"
         property "sonar.projectKey", "com.abnamro.apps.referenceandroid:referenceandroid"
         property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.description", "BUUT Application"
+        property "sonar.description", "This is the project for BUUT assessment"
         property "sonar.report.export.path", "sonar-report.json"
         property "sonar.projectVersion","1.0.0"
 
@@ -61,11 +60,8 @@ sonarqube {
 //        property "sonar.password","[DONOTCOMMIT]"
 
         property "detekt.sonar.kotlin.config.path","config/detekt/detekt.yml"
-        property "sonar.findbugs.excludesFilters","../support/findbugs-filter.xml"
-
-//        for coverage report
-//        property "sonar.java.coveragePlugin", "jacoco"
-//        property "sonar.jacoco.reportPaths","app/build/jacoco/testDevelopDebugUnitTest.exec"
+        property 'sonar.core.codeCoveragePlugin', 'jacoco'
+        property 'sonar.coverage.jacoco.xmlReportPaths', "${getLayout().getBuildDirectory()}/reports/coverage/androidTest/debug/connected/report.xml"
     }
 }
 

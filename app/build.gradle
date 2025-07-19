@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'jacoco'
+    id 'com.github.spotbugs' version "6.2.2"
 }
 
 apply plugin: "io.gitlab.arturbosch.detekt"
@@ -18,14 +20,57 @@ android {
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
+        debug {
+            testCoverageEnabled = true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    testOptions {
+        animationsDisabled = true
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
+        unitTests.returnDefaultValues = true
+    }
     lintOptions {
         disable 'AndroidGradlePluginVersion'
     }
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+// Filter out unnecessary files from code coverage
+def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*',
+                  '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+
+// Apply JaCoCo settings to all unit test tasks
+tasks.withType(Test).configureEach {
+    jacoco.includeNoLocationClasses = true
+    jacoco.excludes = ['jdk.internal.*'] // Exclude unwanted classes
+}
+
+// Task to generate JaCoCo code coverage report
+tasks.register('jacocoTestReport', JacocoReport) {
+    dependsOn 'testDebugUnitTest', 'createDebugCoverageReport'
+
+    def debugTree = fileTree(dir: "${getLayout().getBuildDirectory()}/intermediates/classes/debug", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories.setFrom(files([mainSrc]))
+    classDirectories.setFrom(files([debugTree]))
+
+    // Specify execution data files that JaCoCo will use to generate coverage report
+    executionData.setFrom(fileTree(dir: getLayout().getBuildDirectory(), includes: [
+            "jacoco/testDebugUnitTest.exec",
+            "outputs/code-coverage/connected/*coverage.ec"
+    ]))
 }
 
 dependencies {
