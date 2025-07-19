@@ -46,7 +46,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     packaging {
@@ -68,6 +68,7 @@ android {
         unitTests.returnDefaultValues = true
 
         experimentalProperties["android.experimental.enableScreenshotTest"] = true
+
     }
 
     lintOptions {
@@ -76,9 +77,11 @@ android {
 
     sourceSets {
         screenshotTest {
-            kotlin.srcDirs = ['src/screenshotTest/kotlin']
+            java.srcDirs = ['src/screenshotTest/kotlin']
         }
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 jacoco {
@@ -155,12 +158,16 @@ dependencies {
     // Screenshot testing
     implementation 'com.android.tools.screenshot:screenshot-validation-api:0.0.1-alpha10'
     androidTestImplementation 'com.android.compose.screenshot:screenshot-test-gradle-plugin:0.0.1-alpha10'
-    screenshotTestImplementation 'com.android.tools.screenshot:screenshot-validation-api:1.0.0'
+    screenshotTestImplementation 'com.android.tools.screenshot:screenshot-validation-api:0.0.1-alpha10'
+    screenshotTestImplementation 'androidx.compose.ui:ui-tooling'
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    implementation "com.kaspersky.android-components:kaspresso-compose-support:1.6.0"
+    androidTestImplementation "com.kaspersky.android-components:kaspresso-compose-support:1.6.0"
+    androidTestUtil "androidx.test:orchestrator:1.5.1"
 
     // Ktor
     implementation "io.ktor:ktor-client-android:$ktor_version"

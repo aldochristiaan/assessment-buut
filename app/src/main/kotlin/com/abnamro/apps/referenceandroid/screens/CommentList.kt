@@ -81,7 +81,7 @@ fun CommentList(
     }
 }
 
-@Preview()
+@Preview
 @Composable
 fun CommentListPreview() {
     val sampleComments = listOf(

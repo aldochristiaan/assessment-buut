@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.abnamro.apps.referenceandroid.model.Comment
-import com.android.tools.screenshot.PreviewTest
 
 @Composable
 fun CommentItem(
@@ -81,7 +80,6 @@ fun CommentItem(
 }
 
 @Preview
-@PreviewTest
 @Composable
 fun CommentItemPreview() {
     CommentItem(

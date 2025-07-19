@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abnamro.apps.referenceandroid.viewmodel.CommentsViewModel
 
@@ -53,6 +54,7 @@ fun CommentsListScreen(
                     viewModel.getComments()
                 }
             },
+            modifier = Modifier.testTag("reload_button")
         ) {
             Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh comment")
         }
