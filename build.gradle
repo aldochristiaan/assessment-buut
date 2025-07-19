@@ -46,27 +46,27 @@ tasks.register('clean') {
     delete getLayout().getBuildDirectory()
 }
 
-//sonarqube {
-//    properties {
-//        property "sonar.host.url", "http://p-sonarqube.nl.eu.abnamro.com:9000"
-//        property "sonar.projectName", "Android - Reference App"
-//        property "sonar.projectKey", "com.abnamro.apps.referenceandroid:referenceandroid"
-//        property "sonar.sourceEncoding", "UTF-8"
-//        property "sonar.description", "Reference Android App"
-//        property "sonar.report.export.path", "sonar-report.json"
-//        property "sonar.projectVersion","1.0.0"
-//
-////        when debugging use the q server
-////        property "sonar.host.url", "http://q-sonarqube.nl.eu.abnamro.com:9000"
-////        property "sonar.login","[DONOTCOMMIT]"
-////        property "sonar.password","[DONOTCOMMIT]"
-//
-//        property "detekt.sonar.kotlin.config.path","config/detekt/detekt.yml"
-//        property "sonar.findbugs.excludesFilters","../support/findbugs-filter.xml"
-//
-////        for coverage report
-////        property "sonar.java.coveragePlugin", "jacoco"
-////        property "sonar.jacoco.reportPaths","app/build/jacoco/testDevelopDebugUnitTest.exec"
-//    }
-//}
+sonarqube {
+    properties {
+        property "sonar.host.url", "http://p-sonarqube.nl.eu.abnamro.com:9000"
+        property "sonar.projectName", "Android - Reference App"
+        property "sonar.projectKey", "com.abnamro.apps.referenceandroid:referenceandroid"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.description", "BUUT Application"
+        property "sonar.report.export.path", "sonar-report.json"
+        property "sonar.projectVersion","1.0.0"
+
+//        when debugging use the q server
+//        property "sonar.host.url", "http://q-sonarqube.nl.eu.abnamro.com:9000"
+//        property "sonar.login","[DONOTCOMMIT]"
+//        property "sonar.password","[DONOTCOMMIT]"
+
+        property "detekt.sonar.kotlin.config.path","config/detekt/detekt.yml"
+        property "sonar.findbugs.excludesFilters","../support/findbugs-filter.xml"
+
+//        for coverage report
+//        property "sonar.java.coveragePlugin", "jacoco"
+//        property "sonar.jacoco.reportPaths","app/build/jacoco/testDevelopDebugUnitTest.exec"
+    }
+}
 
