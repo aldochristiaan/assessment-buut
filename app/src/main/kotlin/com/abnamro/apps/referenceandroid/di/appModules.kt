@@ -5,6 +5,7 @@ import com.abnamro.apps.referenceandroid.repository.CommentsRepository
 import com.abnamro.apps.referenceandroid.repository.CommentsRepositoryImpl
 import com.abnamro.apps.referenceandroid.viewmodel.CommentsViewModel
 import kotlinx.coroutines.Dispatchers
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val appModules = module {
@@ -21,6 +22,5 @@ val appModules = module {
         )
     }
     //viewmodel dependency
-    single { CommentsViewModel(repository = get()) }
-
+    viewModel { CommentsViewModel(repository = get()) }
 }
