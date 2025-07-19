@@ -1,0 +1,72 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext.kotlin_version = '2.2.0'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.7.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+plugins {
+    id "io.gitlab.arturbosch.detekt" version "1.23.8"
+    id "org.sonarqube" version "6.2.0.5505"
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: "io.gitlab.arturbosch.detekt"
+    detekt {
+        buildUponDefaultConfig = true
+        allRules = false
+        config = files("${project.rootDir}/config/detekt/detekt.yml")
+        parallel = true
+    }
+}
+
+tasks.register('kotlinLintCheck') {
+    dependsOn['detekt']
+    group = 'verification'
+}
+
+tasks.register('clean') {
+    delete getLayout().getBuildDirectory()
+}
+
+//sonarqube {
+//    properties {
+//        property "sonar.host.url", "http://p-sonarqube.nl.eu.abnamro.com:9000"
+//        property "sonar.projectName", "Android - Reference App"
+//        property "sonar.projectKey", "com.abnamro.apps.referenceandroid:referenceandroid"
+//        property "sonar.sourceEncoding", "UTF-8"
+//        property "sonar.description", "Reference Android App"
+//        property "sonar.report.export.path", "sonar-report.json"
+//        property "sonar.projectVersion","1.0.0"
+//
+////        when debugging use the q server
+////        property "sonar.host.url", "http://q-sonarqube.nl.eu.abnamro.com:9000"
+////        property "sonar.login","[DONOTCOMMIT]"
+////        property "sonar.password","[DONOTCOMMIT]"
+//
+//        property "detekt.sonar.kotlin.config.path","config/detekt/detekt.yml"
+//        property "sonar.findbugs.excludesFilters","../support/findbugs-filter.xml"
+//
+////        for coverage report
+////        property "sonar.java.coveragePlugin", "jacoco"
+////        property "sonar.jacoco.reportPaths","app/build/jacoco/testDevelopDebugUnitTest.exec"
+//    }
+//}
+
