@@ -3,6 +3,8 @@ plugins {
     id 'kotlin-android'
     id 'jacoco'
     id 'com.github.spotbugs' version "6.2.2"
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.2.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.2.0'
 }
 
 apply plugin: "io.gitlab.arturbosch.detekt"
@@ -25,6 +27,25 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/INDEX.LIST"
         }
     }
     testOptions {
@@ -66,10 +87,8 @@ tasks.register('jacocoTestReport', JacocoReport) {
     classDirectories.setFrom(files([debugTree]))
 
     // Specify execution data files that JaCoCo will use to generate coverage report
-    executionData.setFrom(fileTree(dir: "$buildDir", includes: [
-            "jacoco/testDebugUnitTest.exec",
-            "outputs/code-coverage/connected/*coverage.ec"
-    ]))
+    executionData.setFrom(fileTree(dir: "$buildDir", includes: ["jacoco/testDebugUnitTest.exec",
+                                                                "outputs/code-coverage/connected/*coverage.ec"]))
 }
 
 dependencies {
@@ -78,7 +97,27 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.compose.material3:material3-android:1.3.2'
+    implementation 'ch.qos.logback:logback-classic:1.3.15'
+    implementation 'androidx.compose.ui:ui-tooling-preview-android:1.8.3'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+
+    //K-tor
+    implementation "io.ktor:ktor-client-android:$ktor_version"
+    implementation "io.ktor:ktor-client-core:$ktor_version"
+    implementation "io.ktor:ktor-client-serialization-jvm:$ktor_version"
+    implementation "io.ktor:ktor-client-logging:$ktor_version"
+    implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
+    implementation "io.ktor:ktor-client-content-negotiation:$ktor_version"
+
+    //Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"
+
+    //di
+    implementation "io.insert-koin:koin-android:$koin_version"
+    implementation "io.insert-koin:koin-androidx-compose:$koin_version"
 }

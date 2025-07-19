@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">BUUT Application</string>
-    <string name="action_settings">Settings</string>
     <string name="floating_button_content_description">FAB</string>
 </resources>
