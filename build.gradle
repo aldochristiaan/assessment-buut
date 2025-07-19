@@ -8,7 +8,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.11.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jacoco:org.jacoco.core:0.8.13"
+        classpath 'org.jacoco:org.jacoco.core:0.8.13'
     }
 }
 
@@ -43,25 +43,21 @@ tasks.register('clean') {
     delete getLayout().getBuildDirectory()
 }
 
-
-sonarqube {
+sonar {
     properties {
-        property "sonar.host.url", "http://p-sonarqube.nl.eu.abnamro.com:9000"
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.login", "1c33e69cccc01ffafc22414db270ae2f172bfd70"
         property "sonar.projectName", "BUUT Assessment Application"
-        property "sonar.projectKey", "com.abnamro.apps.referenceandroid:referenceandroid"
+        property "sonar.projectKey", "buut-assessment-app"
         property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.sources", "./src/main"
         property "sonar.description", "This is the project for BUUT assessment"
         property "sonar.report.export.path", "sonar-report.json"
         property "sonar.projectVersion","1.0.0"
-
-//        when debugging use the q server
-//        property "sonar.host.url", "http://q-sonarqube.nl.eu.abnamro.com:9000"
-//        property "sonar.login","[DONOTCOMMIT]"
-//        property "sonar.password","[DONOTCOMMIT]"
-
         property "detekt.sonar.kotlin.config.path","config/detekt/detekt.yml"
+        property "sonar.android.lint.report", "./build/reports/lint-results-debug.xml"
         property 'sonar.core.codeCoveragePlugin', 'jacoco'
-        property 'sonar.coverage.jacoco.xmlReportPaths', "${getLayout().getBuildDirectory()}/reports/coverage/androidTest/debug/connected/report.xml"
+        property 'sonar.coverage.jacoco.xmlReportPaths', "app/build/reports/coverage/androidTest/debug/connected/report.xml"
     }
 }
 

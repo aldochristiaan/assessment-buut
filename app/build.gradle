@@ -13,7 +13,6 @@ android {
         namespace = "com.abnamro.apps.referenceandroid"
         applicationId "com.abnamro.apps.referenceandroid"
         minSdkVersion 28
-        //noinspection OldTargetApi
         targetSdkVersion 35
         versionCode 1
         versionName "1.0"
@@ -38,7 +37,7 @@ android {
         unitTests.returnDefaultValues = true
     }
     lintOptions {
-        disable 'AndroidGradlePluginVersion'
+        disable 'AndroidGradlePluginVersion', 'OldTargetApi'
     }
 }
 
@@ -60,14 +59,14 @@ tasks.withType(Test).configureEach {
 tasks.register('jacocoTestReport', JacocoReport) {
     dependsOn 'testDebugUnitTest', 'createDebugCoverageReport'
 
-    def debugTree = fileTree(dir: "${getLayout().getBuildDirectory()}/intermediates/classes/debug", excludes: fileFilter)
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
 
     sourceDirectories.setFrom(files([mainSrc]))
     classDirectories.setFrom(files([debugTree]))
 
     // Specify execution data files that JaCoCo will use to generate coverage report
-    executionData.setFrom(fileTree(dir: getLayout().getBuildDirectory(), includes: [
+    executionData.setFrom(fileTree(dir: "$buildDir", includes: [
             "jacoco/testDebugUnitTest.exec",
             "outputs/code-coverage/connected/*coverage.ec"
     ]))
