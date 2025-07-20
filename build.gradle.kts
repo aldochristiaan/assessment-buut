@@ -1,25 +1,10 @@
+import org.gradle.api.attributes.java.TargetJvmEnvironment.STANDARD_JVM
+
 plugins {
-    id("org.sonarqube") version "6.2.0.5505"
-    id("org.jetbrains.kotlin.plugin.compose") version libs.versions.kotlin.get() apply false
-}
-
-buildscript {
-    dependencies {
-        classpath("com.android.tools.build:gradle:8.11.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
-        classpath(libs.jacoco)  // jacoco dependency with version from toml
-    }
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.sonarqube)
 }
 
 tasks.register("kotlinLintCheck") {
@@ -29,6 +14,21 @@ tasks.register("kotlinLintCheck") {
 
 tasks.register("clean") {
     delete(layout.buildDirectory)
+}
+
+subprojects {
+    afterEvaluate {
+        dependencies.constraints {
+            add("screenshotTestImplementation", "com.google.guava:guava:32.1.3-android") {
+                attributes {
+                    attribute(
+                        TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                        objects.named(TargetJvmEnvironment::class.java, STANDARD_JVM)
+                    )
+                }
+            }
+        }
+    }
 }
 
 sonar {

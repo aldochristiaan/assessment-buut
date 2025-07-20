@@ -1,16 +1,16 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.jacoco)
-    alias(libs.plugins.spotbugs)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.jacoco)
+    alias(libs.plugins.spotbugs)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.screenshot)
 }
 
 android {
     namespace = "com.abnamro.apps.referenceandroid"
-
     compileSdk = 36
 
     defaultConfig {
@@ -49,14 +49,10 @@ android {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
-    packaging {
-        resources {
-            excludes += setOf(
-                "/META-INF/{AL2.0,LGPL2.1}",
-                "META-INF/INDEX.LIST"
-            )
-        }
-    }
+    packaging.resources.excludes += setOf(
+        "/META-INF/{AL2.0,LGPL2.1}",
+        "META-INF/INDEX.LIST"
+    )
 
     testOptions {
         animationsDisabled = true
@@ -85,6 +81,10 @@ detekt {
     config.setFrom(file("$rootDir/config/detekt/detekt.yml"))
 }
 
+// ─────────────────────────────────────────
+// Code coverage task
+// ─────────────────────────────────────────
+
 val fileFilter = listOf(
     "**/R.class",
     "**/R$*.class",
@@ -95,7 +95,7 @@ val fileFilter = listOf(
 )
 
 tasks.withType<Test>().configureEach {
-    extensions.configure(JacocoTaskExtension::class) {
+    extensions.configure<JacocoTaskExtension> {
         isIncludeNoLocationClasses = true
         excludes = listOf("jdk.internal.*")
     }
@@ -120,90 +120,103 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     )
 }
 
-val allureReportDirectory = "$buildDir/reports/allure-results"
-val allureDownloadsDirectory = "/sdcard/Documents/allure-results"
+// ─────────────────────────────────────────
+// Allure tasks
+// ─────────────────────────────────────────
 
-// Task: clearAllureResult
+val allureReportDir = "$buildDir/reports/allure-results"
+val allureDeviceDir = "/sdcard/Documents/allure-results"
+
 val clearAllureResultTask = tasks.register<Exec>("clearAllureResult") {
     executable = android.adbExe.toString()
-    args("shell", "rm", "-r", allureDownloadsDirectory)
+    args("shell", "rm", "-r", allureDeviceDir)
 }
 
-// Task: createAllureDirectory
 val createAllureDirectoryTask = tasks.register<Exec>("createAllureDirectory") {
     executable = android.adbExe.toString()
-    args("shell", "mkdir", "-p", allureDownloadsDirectory)
+    args("shell", "mkdir", "-p", allureDeviceDir)
 }
 
-// Task: fetchAllureReport
 val fetchAllureReportTask = tasks.register<Exec>("fetchAllureReport") {
     group = "reporting"
     executable = android.adbExe.toString()
-    args("pull", "$allureDownloadsDirectory/.", allureReportDirectory)
+    args("pull", "$allureDeviceDir/.", allureReportDir)
 
-    finalizedBy(clearAllureResultTask)
     dependsOn(createAllureDirectoryTask)
+    finalizedBy(clearAllureResultTask)
 
     doFirst {
-        delete(allureReportDirectory)
-        File(allureReportDirectory).mkdirs()
+        delete(allureReportDir)
+        File(allureReportDir).mkdirs()
     }
 }
 
-// Hook: Add finalizedBy to AndroidTest tasks
 tasks.configureEach {
     if (name.contains("AndroidTest")) {
         finalizedBy(fetchAllureReportTask)
     }
 }
 
+// ─────────────────────────────────────────
+// Dependencies
+// ─────────────────────────────────────────
+
 dependencies {
     implementation(platform(libs.compose.bom))
+    implementation(libs.core.ktx)
     androidTestImplementation(platform(libs.compose.bom))
 
     implementation(libs.kotlin.stdlib)
     implementation(fileTree("libs") { include("*.jar") })
+
+    // AndroidX & Compose
     implementation(libs.activity.compose)
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
-
     implementation(libs.compose.ui.preview)
+    implementation(libs.compose.material3)
     debugImplementation(libs.compose.ui.tooling)
     androidTestImplementation(libs.compose.ui.test.junit4)
     debugImplementation(libs.compose.ui.test.manifest)
-    implementation(libs.compose.material3)
 
+    // Logging
     implementation(libs.logback)
 
-    implementation(libs.screenshot.api)
+    // Screenshot testing
+    implementation(libs.screenshot.validation.api)
     androidTestImplementation(libs.screenshot.plugin)
-    screenshotTestImplementation(libs.screenshot.api)
+    screenshotTestImplementation(libs.screenshot.validation.api)
     screenshotTestImplementation(libs.compose.ui.tooling)
 
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.kaspresso)
-    implementation(libs.kaspresso.compose)
-    implementation(libs.kaspresso.allure)
     androidTestImplementation(libs.kaspresso.compose)
     androidTestImplementation(libs.kaspresso.allure)
+    implementation(libs.kaspresso.compose)
+    implementation(libs.kaspresso.allure)
     androidTestImplementation(libs.espresso.device)
     androidTestUtil(libs.orchestrator)
 
-    implementation(libs.ktor.client.android)
+    // Ktor
     implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.serialization)
-    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.json)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.negotiation)
 
+    // Coroutines
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
     implementation(libs.coroutines.adapter)
 
+    // Koin
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
 
+    // Detekt plugins
     detektPlugins(libs.detekt.twitter)
 }

@@ -39,14 +39,14 @@ fun CommentItem(
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = modifier.padding(16.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = modifier.padding(bottom = 8.dp)
             ) {
                 Box(
-                    modifier = Modifier
+                    modifier = modifier
                         .size(40.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primary),
@@ -59,7 +59,7 @@ fun CommentItem(
                         fontSize = 24.sp
                     )
                 }
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = modifier.width(8.dp))
                 Column {
                     Text(
                         text = comment.name,
@@ -76,7 +76,7 @@ fun CommentItem(
             Text(
                 text = comment.body,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = modifier.padding(top = 8.dp)
             )
         }
     }

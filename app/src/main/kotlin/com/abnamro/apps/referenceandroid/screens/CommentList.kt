@@ -29,6 +29,7 @@ fun CommentList(
     paddingValues: PaddingValues,
     commentsUIState: CommentsUIState,
     modifier: Modifier = Modifier,
+    useLazyColumn: Boolean = true,
 ) {
     Column(
         modifier = modifier
@@ -38,9 +39,17 @@ fun CommentList(
         verticalArrangement = Arrangement.Center
     ) {
         AnimatedVisibility(visible = commentsUIState.comments.isNotEmpty()) {
-            LazyColumn {
-                items(items = commentsUIState.comments) { comment ->
-                    CommentItem(comment = comment)
+            if (useLazyColumn) {
+                LazyColumn {
+                    items(items = commentsUIState.comments) { comment ->
+                        CommentItem(comment = comment)
+                    }
+                }
+            } else {
+                Column {
+                    commentsUIState.comments.forEach { comment ->
+                        CommentItem(comment)
+                    }
                 }
             }
         }
@@ -49,7 +58,10 @@ fun CommentList(
             visible = (commentsUIState.comments.isEmpty() && !commentsUIState.isLoading
                     && commentsUIState.error == null)
         ) {
-            Text("Please press the button to load comments", fontSize = 16.sp)
+            Text(
+                text = "Please press the button to load comments",
+                fontSize = 16.sp
+            )
         }
 
         AnimatedVisibility(visible = commentsUIState.isLoading) {
@@ -58,7 +70,7 @@ fun CommentList(
 
         AnimatedVisibility(visible = commentsUIState.error != null) {
             Column(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxSize()
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,7 +80,7 @@ fun CommentList(
                     imageVector = Icons.Default.Warning,
                     contentDescription = "Error",
                     tint = Color.Red,
-                    modifier = Modifier
+                    modifier = modifier
                         .size(60.dp)
                         .padding(bottom = 10.dp)
                 )
