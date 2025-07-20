@@ -1,4 +1,4 @@
-name: "Check and Run UI Tests"
+name: "Run UI Tests"
 
 on:
   workflow_dispatch:
