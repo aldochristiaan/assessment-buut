@@ -24,11 +24,13 @@ import androidx.compose.ui.unit.sp
 import com.abnamro.apps.referenceandroid.model.Comment
 import com.abnamro.apps.referenceandroid.viewmodel.CommentsUIState
 
+@Suppress("LongMethod")
 @Composable
 fun CommentList(
     paddingValues: PaddingValues,
     commentsUIState: CommentsUIState,
     modifier: Modifier = Modifier,
+    useLazyColumn: Boolean = true,
 ) {
     Column(
         modifier = modifier
@@ -38,9 +40,17 @@ fun CommentList(
         verticalArrangement = Arrangement.Center
     ) {
         AnimatedVisibility(visible = commentsUIState.comments.isNotEmpty()) {
-            LazyColumn {
-                items(items = commentsUIState.comments) { comment ->
-                    CommentItem(comment = comment)
+            if (useLazyColumn) {
+                LazyColumn {
+                    items(items = commentsUIState.comments) { comment ->
+                        CommentItem(comment = comment)
+                    }
+                }
+            } else {
+                Column {
+                    commentsUIState.comments.forEach { comment ->
+                        CommentItem(comment)
+                    }
                 }
             }
         }
@@ -49,7 +59,10 @@ fun CommentList(
             visible = (commentsUIState.comments.isEmpty() && !commentsUIState.isLoading
                     && commentsUIState.error == null)
         ) {
-            Text("Please press the button to load comments", fontSize = 16.sp)
+            Text(
+                text = "Please press the button to load comments",
+                fontSize = 16.sp
+            )
         }
 
         AnimatedVisibility(visible = commentsUIState.isLoading) {

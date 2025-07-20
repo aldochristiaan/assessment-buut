@@ -1,0 +1,42 @@
+name: "PR Checks (Lint, Test, Screenshot Validation)"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pr-check:
+    name: "Verify PR to main branch"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 🛎️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: 💾 Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: 🧹 Run Detekt and Lint
+        run: ./gradlew detekt lint
+
+      - name: 🧪 Run Unit Tests and  📊 Generate Jacoco Report
+        run: ./gradlew test jacocoTestReport
+
+      - name: 🖼️ Validate Screenshot Test
+        run: ./gradlew validateScreenshot
+
+      - name: 📤 Upload Validation Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: app/build/reports/
