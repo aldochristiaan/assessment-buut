@@ -34,14 +34,7 @@ jobs:
       - name: 🖼️ Validate Screenshot Test
         run: ./gradlew validateScreenshot
 
-      - name: 📤 Upload Lint Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: lint-report
-          path: '**/build/reports/lint-results*.*'
-
-      - name: 📤 Upload Test Reports
+      - name: 📤 Upload Validation Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
