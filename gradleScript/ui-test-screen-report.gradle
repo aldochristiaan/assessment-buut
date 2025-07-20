@@ -1,0 +1,33 @@
+def allureReportDirectory = "$buildDir/reports/allure-results"
+def allureDownloadsDirectory = "/sdcard/Documents/allure-results"
+
+def clearAllureResultTask = tasks.register('clearAllureResult', Exec) {
+    executable "${android.getAdbExe().toString()}"
+    args 'shell', 'rm', '-r', allureDownloadsDirectory
+}
+
+def createAllureDirectoryTask = tasks.register('createAllureDirectory', Exec) {
+    executable "${android.getAdbExe().toString()}"
+    args 'shell', 'mkdir', '-p', allureDownloadsDirectory
+}
+
+def fetchAllureReportTask = tasks.register('fetchAllureReport', Exec) {
+    group = 'reporting'
+    executable "${android.getAdbExe().toString()}"
+    args 'pull', "$allureDownloadsDirectory/.", allureReportDirectory
+    finalizedBy(clearAllureResultTask)
+    dependsOn(createAllureDirectoryTask)
+
+    doFirst {
+        delete allureReportDirectory
+        new File(allureReportDirectory).mkdirs()
+    }
+}
+
+tasks.configureEach { task ->
+    if (task.name.contains('AndroidTest')) {
+        task.finalizedBy {
+            fetchAllureReportTask
+        }
+    }
+}
