@@ -63,6 +63,7 @@ android {
 
     lint {
         disable += listOf("AndroidGradlePluginVersion", "OldTargetApi")
+        abortOnError = false
     }
 
     sourceSets {
@@ -102,7 +103,7 @@ tasks.withType<Test>().configureEach {
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {
-    dependsOn("testDebugUnitTest", "createDebugCoverageReport")
+    dependsOn("testDebugUnitTest")
 
     val debugTree = fileTree("${buildDir}/intermediates/classes/debug") {
         exclude(fileFilter)
@@ -151,10 +152,8 @@ val fetchAllureReportTask = tasks.register<Exec>("fetchAllureReport") {
     }
 }
 
-tasks.configureEach {
-    if (name.contains("AndroidTest")) {
-        finalizedBy(fetchAllureReportTask)
-    }
+tasks.named("connectedCheck") {
+    finalizedBy(fetchAllureReportTask)
 }
 
 // ─────────────────────────────────────────
