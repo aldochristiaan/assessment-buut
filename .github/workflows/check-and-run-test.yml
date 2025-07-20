@@ -115,10 +115,3 @@ jobs:
         with:
           name: allure-report-${{ github.event.inputs.emulator }}-API${{ github.event.inputs.api }}
           path: allure-report/
-
-      - name: ⬆️ Upload Test Reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-test-report-${{ github.event.inputs.emulator }}-API${{ github.event.inputs.api }}
-          path: app/build/reports
