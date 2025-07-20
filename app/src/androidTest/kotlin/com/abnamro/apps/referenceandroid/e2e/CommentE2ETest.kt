@@ -14,14 +14,19 @@ import com.abnamro.apps.referenceandroid.MainActivity
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
+import org.junit.rules.TestRule
 
 class CommentE2ETest {
 
-    @get:Rule
     val composeTestRule = createAndroidComposeRule(MainActivity::class.java)
+    val screenOrientationRule: ScreenOrientationRule =
+        ScreenOrientationRule(ScreenOrientation.PORTRAIT)
 
     @get:Rule
-    val screenOrientationRule: ScreenOrientationRule = ScreenOrientationRule(ScreenOrientation.PORTRAIT)
+    val ruleChain: TestRule = RuleChain
+        .outerRule(screenOrientationRule)
+        .around(composeTestRule)
 
     @Test
     fun validateCommentAreLoadedAndSnackBarDisplayed() {
@@ -34,7 +39,7 @@ class CommentE2ETest {
     }
 
     @Test
-    @Ignore("Not working on Emulator")
+//    @Ignore("Not working on Emulator")
     fun validateCommentAreLoadedAndSnackBarDisplayedRotatedDevice() {
         onDevice().setScreenOrientation(ScreenOrientation.LANDSCAPE)
         composeTestRule.onNodeWithTag("reload_button").performClick()
