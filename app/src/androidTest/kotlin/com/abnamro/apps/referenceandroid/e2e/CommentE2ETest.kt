@@ -39,7 +39,7 @@ class CommentE2ETest {
     }
 
     @Test
-//    @Ignore("Not working on Emulator")
+    @Ignore("Not working on Emulator")
     fun validateCommentAreLoadedAndSnackBarDisplayedRotatedDevice() {
         onDevice().setScreenOrientation(ScreenOrientation.LANDSCAPE)
         composeTestRule.onNodeWithTag("reload_button").performClick()
