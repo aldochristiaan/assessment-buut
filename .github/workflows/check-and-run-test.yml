@@ -89,7 +89,7 @@ jobs:
             ~/.android/adb*
           key: ${{ github.event.inputs.target }}_${{ github.event.inputs.api }}
 
-      - name: create AVD and generate snapshot for caching
+      - name: Create AVD and generate snapshot for caching
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ github.event.inputs.api }}
@@ -104,7 +104,7 @@ jobs:
           avd-name: ${{ github.event.inputs.target }}_${{ github.event.inputs.api }}
           script: echo "Generated AVD snapshot for caching."
 
-      - name: run tests
+      - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ github.event.inputs.api }}
