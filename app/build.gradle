@@ -19,7 +19,7 @@ android {
         targetSdkVersion 35
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner = "com.kaspersky.kaspresso.runner.KaspressoRunner"
     }
 
     buildTypes {
@@ -59,16 +59,13 @@ android {
     testOptions {
         animationsDisabled = true
 
-        unitTests.all {
-            jacoco {
-                includeNoLocationClasses = true
-            }
+        emulatorControl {
+            enable = true
         }
 
         unitTests.returnDefaultValues = true
 
         experimentalProperties["android.experimental.enableScreenshotTest"] = true
-
     }
 
     lintOptions {
@@ -76,12 +73,13 @@ android {
     }
 
     sourceSets {
+        androidTest {
+            manifest.srcFile 'src/androidTest/AndroidManifest.xml'
+        }
         screenshotTest {
             java.srcDirs = ['src/screenshotTest/kotlin']
         }
     }
-
-    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 jacoco {
@@ -131,6 +129,8 @@ tasks.register('jacocoTestReport', JacocoReport) {
     ))
 }
 
+apply from: '../gradleScript/ui-test-screen-report.gradle'
+
 dependencies {
     def composeBom = platform('androidx.compose:compose-bom:2025.07.00')
     implementation composeBom
@@ -163,10 +163,13 @@ dependencies {
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation "com.kaspersky.android-components:kaspresso:1.6.0"
     implementation "com.kaspersky.android-components:kaspresso-compose-support:1.6.0"
+    implementation "com.kaspersky.android-components:kaspresso-allure-support:1.6.0"
     androidTestImplementation "com.kaspersky.android-components:kaspresso-compose-support:1.6.0"
+    androidTestImplementation "com.kaspersky.android-components:kaspresso-allure-support:1.6.0"
+    androidTestImplementation "androidx.test.espresso:espresso-device:1.0.1"
     androidTestUtil "androidx.test:orchestrator:1.5.1"
 
     // Ktor

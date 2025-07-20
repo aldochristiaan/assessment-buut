@@ -66,6 +66,7 @@ class CommentsViewModel(
             )
         }
     }
+
     sealed class UIEvent {
         data class ShowSnackBar(val message: String) : UIEvent()
     }

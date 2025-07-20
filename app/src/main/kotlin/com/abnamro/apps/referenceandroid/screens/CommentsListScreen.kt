@@ -13,56 +13,50 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.abnamro.apps.referenceandroid.viewmodel.CommentsViewModel
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import com.abnamro.apps.referenceandroid.viewmodel.CommentsUIState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsListScreen(
-    viewModel: CommentsViewModel,
+    commentsUIState: CommentsUIState,
+    snackBarHostState: SnackbarHostState,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val snackBarHostState = remember { SnackbarHostState() }
-    val commentsUIState by viewModel.commentsUIState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.uiEvent.collect { event ->
-            when (event) {
-                is CommentsViewModel.UIEvent.ShowSnackBar -> {
-                    snackBarHostState.showSnackbar(event.message)
-                }
-            }
-        }
-    }
-
-    Scaffold(modifier = modifier, topBar = {
-        TopAppBar(
-            title = { Text(text = "Comments") }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary,
+    Scaffold(
+        modifier = Modifier.semantics { testTag = "compose_main_screen" },
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Comments") }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                )
             )
-        )
-    }, floatingActionButton = {
-        FloatingActionButton(
-            onClick = {
-                if (!commentsUIState.isLoading) {
-                    viewModel.getComments()
-                }
-            },
-            modifier = Modifier.testTag("reload_button")
-        ) {
-            Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh comment")
-        }
-    }, snackbarHost = {
-        SnackbarHost(hostState = snackBarHostState)
-    }, content = { paddingValues ->
-        CommentList(paddingValues, commentsUIState)
-    })
+        }, floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    if (!commentsUIState.isLoading) {
+                        onClick()
+                    }
+                },
+                modifier = Modifier.testTag("reload_button"),
+            ) {
+                Icon(imageVector = Icons.Default.Refresh, contentDescription = "Reload comment")
+            }
+        }, snackbarHost = {
+            SnackbarHost(
+                modifier = modifier.semantics { testTag = "snackBar" },
+                hostState = snackBarHostState
+            )
+        }, content = { paddingValues ->
+            CommentList(paddingValues, commentsUIState)
+        })
 }
+
+
 
 
