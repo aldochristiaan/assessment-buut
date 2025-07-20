@@ -120,6 +120,7 @@ jobs:
           script: ./gradlew check connectedCheck
 
       - name: Generate Allure report
+        if: always()
         shell: bash
         run: |
           allure generate -c --single-file app/build/reports/allure-results -o allure-report
