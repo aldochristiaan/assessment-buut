@@ -21,7 +21,7 @@ on:
       arch:
         description: 'CPU architecture'
         required: true
-        default: 'x86_64'
+        default: 'x86'
         type: choice
         options:
           - x86
@@ -30,7 +30,7 @@ on:
       channel:
         description: 'Channel to download the SDK components from'
         required: true
-        default: 'canary'
+        default: 'stable'
         type: choice
         options:
           - stable
