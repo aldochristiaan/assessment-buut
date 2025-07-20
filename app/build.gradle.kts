@@ -157,6 +157,16 @@ tasks.configureEach {
     }
 }
 
+tasks.register("updateScreenshot") {
+    dependsOn("updateDebugScreenshotTest")
+    group = "verification"
+}
+
+tasks.register("validateScreenshot") {
+    dependsOn("validateDebugScreenshotTest")
+    group = "verification"
+}
+
 // ─────────────────────────────────────────
 // Dependencies
 // ─────────────────────────────────────────
