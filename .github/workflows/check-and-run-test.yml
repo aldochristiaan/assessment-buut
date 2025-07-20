@@ -96,8 +96,14 @@ jobs:
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${{ matrix.api-level }}
+          api-level: ${{ github.event.inputs.api }}
+          target: ${{ github.event.inputs.target }}
+          arch: ${{ github.event.inputs.arch }}
+          profile: ${{ github.event.inputs.emulator }}
+          channel: ${{ github.event.inputs.channel }}
           force-avd-creation: false
+          disable-spellchecker: true
+          avd-name: ${{ github.event.inputs.target }}_${{ github.event.inputs.api }}
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: ./gradlew check connectedCheck
