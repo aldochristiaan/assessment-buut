@@ -128,5 +128,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report-${{ inputs.matrix_emulator }}-API${{ inputs.matrix_api }}
+          name: allure-report-${{ github.event.inputs.emulator }}-API${{ github.event.inputs.api }}
           path: allure-report/
