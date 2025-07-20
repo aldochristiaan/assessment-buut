@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.abnamro.apps.referenceandroid.model.Comment
 import com.abnamro.apps.referenceandroid.viewmodel.CommentsUIState
 
+@Suppress("LongMethod")
 @Composable
 fun CommentList(
     paddingValues: PaddingValues,
@@ -70,7 +71,7 @@ fun CommentList(
 
         AnimatedVisibility(visible = commentsUIState.error != null) {
             Column(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,7 +81,7 @@ fun CommentList(
                     imageVector = Icons.Default.Warning,
                     contentDescription = "Error",
                     tint = Color.Red,
-                    modifier = modifier
+                    modifier = Modifier
                         .size(60.dp)
                         .padding(bottom = 10.dp)
                 )

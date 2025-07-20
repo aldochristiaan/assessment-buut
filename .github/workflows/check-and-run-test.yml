@@ -1,86 +1,62 @@
-name: "Check and run UI Tests"
+name: "Check and Run UI Tests"
 
 on:
   workflow_dispatch:
     inputs:
       api:
-        description: 'API Level (26-34)'
+        description: 'API Level (26–34)'
         required: true
         default: '30'
       target:
-        description: 'Target of the system image'
+        description: 'System image target'
         required: true
         default: 'aosp_atd'
         type: choice
-        options:
-          - default
-          - google_apis
-          - playstore
-          - aosp_atd
-          - google_atd
+        options: [default, google_apis, playstore, aosp_atd, google_atd]
       arch:
-        description: 'CPU architecture'
+        description: 'CPU Architecture'
         required: true
         default: 'x86'
         type: choice
-        options:
-          - x86
-          - x86_64
-          - arm64-v8a
+        options: [x86, x86_64, arm64-v8a]
       channel:
-        description: 'Channel to download the SDK components from'
+        description: 'SDK Channel'
         required: true
         default: 'stable'
         type: choice
-        options:
-          - stable
-          - beta
-          - dev
-          - canary
+        options: [stable, beta, dev, canary]
       emulator:
-        description: 'Emulator (pixel_5, pixel_6, Nexus 6)'
+        description: 'Emulator device'
         required: true
         default: 'pixel_5'
 
-
 jobs:
-  build:
-    name: "Run on ${{ github.event.inputs.emulator }} ${{ github.event.inputs.api }}"
+  ui-tests:
+    name: Run on ${{ github.event.inputs.emulator }} API${{ github.event.inputs.api }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
     steps:
-      - name: Checkout default branch
+      - name: 🛎️ Checkout code
         uses: actions/checkout@v4
 
-      - name: set up JDK 21
+      - name: ☕ Setup JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: gradle
 
-      - name: Install Allure CLI
-        shell: bash
-        run: |
-          echo "Installing Allure..."
-          sudo apt-get update
-          sudo apt-get install -y default-jre unzip
-          curl -o allure.zip -L https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.zip
-          unzip -o allure.zip -d /opt/
-          sudo ln -sf /opt/allure-2.27.0/bin/allure /usr/local/bin/allure
-          allure --version
+      - name: 💾 Setup Gradle cache
+        uses: gradle/actions/setup-gradle@v3
 
-      - name: Enable KVM
+      - name: ⚡ Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Gradle cache
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: AVD cache
+      - name: 📦 Cache AVD
         uses: actions/cache@v4
         id: avd-cache
         with:
@@ -89,7 +65,7 @@ jobs:
             ~/.android/adb*
           key: ${{ github.event.inputs.target }}_${{ github.event.inputs.api }}
 
-      - name: Create AVD and generate snapshot for caching
+      - name: 🤖 Create AVD (Snapshot Cache Only)
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ github.event.inputs.api }}
@@ -97,14 +73,14 @@ jobs:
           arch: ${{ github.event.inputs.arch }}
           profile: ${{ github.event.inputs.emulator }}
           channel: ${{ github.event.inputs.channel }}
+          avd-name: ${{ github.event.inputs.target }}_${{ github.event.inputs.api }}
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           disable-spellchecker: true
-          avd-name: ${{ github.event.inputs.target }}_${{ github.event.inputs.api }}
-          script: echo "Generated AVD snapshot for caching."
+          script: echo "Snapshot generated for AVD cache."
 
-      - name: Run tests
+      - name: 🧪 Run UI Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ github.event.inputs.api }}
@@ -112,27 +88,34 @@ jobs:
           arch: ${{ github.event.inputs.arch }}
           profile: ${{ github.event.inputs.emulator }}
           channel: ${{ github.event.inputs.channel }}
-          force-avd-creation: false
-          disable-spellchecker: true
           avd-name: ${{ github.event.inputs.target }}_${{ github.event.inputs.api }}
+          force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
+          disable-spellchecker: true
           script: ./gradlew check connectedCheck
 
-      - name: Generate Allure report
+      - name: 📥 Install Allure CLI
+        run: |
+          sudo apt-get update && sudo apt-get install -y default-jre unzip
+          curl -o allure.zip -L https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.zip
+          unzip -o allure.zip -d /opt/
+          sudo ln -sf /opt/allure-2.27.0/bin/allure /usr/local/bin/allure
+          allure --version
+
+      - name: 📊 Generate Allure Report
         if: always()
-        shell: bash
         run: |
           allure generate -c --single-file app/build/reports/allure-results -o allure-report
 
-      - name: Upload Allure report
+      - name: ⬆️ Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report-${{ github.event.inputs.emulator }}-API${{ github.event.inputs.api }}
           path: allure-report/
 
-      - name: Upload test reports
+      - name: ⬆️ Upload Test Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:

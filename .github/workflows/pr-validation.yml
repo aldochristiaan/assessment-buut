@@ -1,0 +1,52 @@
+name: "PR Checks (Lint, Test, Screenshot Validation)"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pr-check:
+    name: "Verify PR to main branch"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 🛎️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: 💾 Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: 🧹 Run Lint
+        run: ./gradlew lint
+
+      - name: ✅ Run Check
+        run: ./gradlew check
+
+      - name: 🧪 Run Unit Tests
+        run: ./gradlew test
+
+      - name: 🖼️ Validate Screenshot Test
+        run: ./gradlew validateScreenshot
+
+      - name: 📤 Upload Lint Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: '**/build/reports/lint-results*.*'
+
+      - name: 📤 Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: '**/build/test-results/'
