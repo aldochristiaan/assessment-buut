@@ -18,8 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,7 +46,8 @@ fun CommentList(
         }
 
         AnimatedVisibility(
-            visible = (commentsUIState.comments.isEmpty() && !commentsUIState.isLoading)
+            visible = (commentsUIState.comments.isEmpty() && !commentsUIState.isLoading
+                    && commentsUIState.error == null)
         ) {
             Text("Please press the button to load comments", fontSize = 16.sp)
         }

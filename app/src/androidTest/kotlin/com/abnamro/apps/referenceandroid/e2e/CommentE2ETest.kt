@@ -11,15 +11,19 @@ import androidx.test.espresso.device.EspressoDevice.Companion.onDevice
 import androidx.test.espresso.device.action.ScreenOrientation
 import androidx.test.espresso.device.rules.ScreenOrientationRule
 import com.abnamro.apps.referenceandroid.MainActivity
-import org.junit.Ignore
+import com.kaspersky.components.alluresupport.withForcedAllureSupport
+import com.kaspersky.components.composesupport.config.addComposeSupport
+import com.kaspersky.kaspresso.kaspresso.Kaspresso
+import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 
-class CommentE2ETest {
+class CommentE2ETest :
+    TestCase(kaspressoBuilder = Kaspresso.Builder.withForcedAllureSupport().addComposeSupport()) {
 
-    val composeTestRule = createAndroidComposeRule(MainActivity::class.java)
+    val composeTestRule = createAndroidComposeRule<MainActivity>()
     val screenOrientationRule: ScreenOrientationRule =
         ScreenOrientationRule(ScreenOrientation.PORTRAIT)
 
@@ -39,7 +43,6 @@ class CommentE2ETest {
     }
 
     @Test
-    @Ignore("Not working on Emulator")
     fun validateCommentAreLoadedAndSnackBarDisplayedRotatedDevice() {
         onDevice().setScreenOrientation(ScreenOrientation.LANDSCAPE)
         composeTestRule.onNodeWithTag("reload_button").performClick()

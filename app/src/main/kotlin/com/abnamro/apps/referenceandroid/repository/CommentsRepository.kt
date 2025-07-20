@@ -21,7 +21,9 @@ class CommentsRepositoryImpl(
                 val response = apiService.getComments()
                 NetworkResult.Success(response)
             } catch (ignoreError: Exception) {
-                NetworkResult.Error(ignoreError.message ?: "Something went wrong")
+                NetworkResult.Error(
+                    ignoreError.message ?: "Something went wrong.\n Please try again."
+                )
             }
         }
     }
