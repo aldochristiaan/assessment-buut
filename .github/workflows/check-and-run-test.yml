@@ -93,7 +93,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           disable-spellchecker: true
-          script: ./gradlew check connectedCheck
+          script: ./gradlew connectedCheck
 
       - name: 📥 Install Allure CLI
         if: always()
