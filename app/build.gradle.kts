@@ -82,6 +82,11 @@ detekt {
     config.setFrom(file("$rootDir/config/detekt/detekt.yml"))
 }
 
+tasks.register("kotlinLintCheck") {
+    dependsOn("detekt")
+    group = "verification"
+}
+
 // ─────────────────────────────────────────
 // Code coverage task
 // ─────────────────────────────────────────
@@ -152,8 +157,10 @@ val fetchAllureReportTask = tasks.register<Exec>("fetchAllureReport") {
     }
 }
 
-tasks.named("connectedCheck") {
-    finalizedBy(fetchAllureReportTask)
+tasks.configureEach {
+    if (name.contains("AndroidTest")) {
+        finalizedBy(fetchAllureReportTask)
+    }
 }
 
 // ─────────────────────────────────────────
