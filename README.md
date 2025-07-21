@@ -183,7 +183,7 @@ Runs on all PRs to main:
 - Screenshot test validation
 - Uploads all test artifacts
 
-Example : [PR validation](https://github.com/aldochristiaan/assessment-buut/actions/runs/16405543353)
+Example : [PR validation](https://github.com/aldochristiaan/assessment-buut/actions/runs/16413514484)
 
 ### 8. Tests Explanation
 ---
