@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.sonarqube)
 }
 
-tasks.register("clean") {
+tasks.register<Delete>("clean") {
     delete(layout.buildDirectory)
 }
 
