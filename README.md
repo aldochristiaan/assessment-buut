@@ -94,6 +94,8 @@ allure generate -c --single-file app/build/reports/allure-results -o allure-repo
 
 Results available at: `allure-report/index.html`
 
+![Allure Report](allure-report.png)
+
 ### 6. 🧼 Code Quality – SonarQube (Local Setup)
 
 This project supports **static code analysis** via **SonarQube**.
@@ -244,12 +246,12 @@ This test suite demonstrates an end-to-end UI test for the comments screen using
 ##### `CommentScreen` Page Object
 
 - Encapsulates the main UI components by wrapping Compose semantics nodes:
-    - `reloadButton`: The reload button identified by the test tag `"reload_button"`.
-    - `commentItem`: Represents individual comment items with the test tag `"comment_item"`.
-    - `snackBar`: The Snackbar notification identified by `"snackBar"` tag.
+  - `reloadButton`: The reload button identified by the test tag `"reload_button"`.
+  - `commentItem`: Represents individual comment items with the test tag `"comment_item"`.
+  - `snackBar`: The Snackbar notification identified by `"snackBar"` tag.
 - The root view is identified by the test tag `"compose_main_screen"`.
 
-##### Test: `validateCommentLoaded`
+##### Test: **`validateCommentLoaded`**
 
 - Opens the `CommentScreen`.
 - Performs a click on the reload button and asserts it is displayed.
@@ -267,11 +269,12 @@ This approach ensures robust and maintainable UI tests for Compose-based Android
 
 ---
 
-### Compose Screenshot Tests
+#### Compose Screenshot Tests
 
 These tests verify the visual correctness of individual comment items and the comments list UI in various states using Jetpack Compose previews combined with screenshot testing.
 
-##### `CommentItemScreenshotTest`
+**`CommentItemScreenshotTest`**
+
 
 Tests different variations of the `CommentItem` composable to ensure it renders properly in cases such as:
 
@@ -282,7 +285,7 @@ Tests different variations of the `CommentItem` composable to ensure it renders 
 
 Each variation is annotated with `@PreviewTest` and `@Preview` to generate screenshots during tests.
 
-##### `CommentListScreenshotTest`
+**`CommentListScreenshotTest`**
 
 Validates the `CommentList` composable in multiple UI states:
 
@@ -293,7 +296,7 @@ Validates the `CommentList` composable in multiple UI states:
 
 Each state uses `@PreviewTest` and `@Preview` annotations for automated screenshot generation and visual regression testing.
 
-#### Purpose
+##### Purpose
 
 - Ensure UI components render correctly under different data and edge cases.
 - Catch visual regressions early using automated screenshot comparison.
@@ -301,4 +304,7 @@ Each state uses `@PreviewTest` and `@Preview` annotations for automated screensh
 
 This setup is ideal for visual testing of Compose UI elements and layouts, providing confidence in design consistency across app versions.
 
+![Screenshot Test Report](screenshot-test.png)
+
 ---
+
