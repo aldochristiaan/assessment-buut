@@ -161,7 +161,6 @@ tasks.configureEach {
     if (name.contains("AndroidTest")) {
         finalizedBy(fetchAllureReportTask)
     }
-}
 
 // ─────────────────────────────────────────
 // Screenshot Testing
