@@ -266,3 +266,39 @@ This test suite demonstrates an end-to-end UI test for the comments screen using
 This approach ensures robust and maintainable UI tests for Compose-based Android apps.
 
 ---
+
+### Compose Screenshot Tests
+
+These tests verify the visual correctness of individual comment items and the comments list UI in various states using Jetpack Compose previews combined with screenshot testing.
+
+##### `CommentItemScreenshotTest`
+
+Tests different variations of the `CommentItem` composable to ensure it renders properly in cases such as:
+
+- **Normal comment** with standard content.
+- **Long comment body** to verify text wrapping and layout handling.
+- **Long email address** to check UI behavior with extended text.
+- **Long name** to validate UI with large author names.
+
+Each variation is annotated with `@PreviewTest` and `@Preview` to generate screenshots during tests.
+
+##### `CommentListScreenshotTest`
+
+Validates the `CommentList` composable in multiple UI states:
+
+- **Data loaded state:** Displays a sample list of comments.
+- **Empty data state:** Verifies UI when no comments are available.
+- **Loading state:** Tests the UI while data is being fetched.
+- **Error state:** Displays an error message when loading fails.
+
+Each state uses `@PreviewTest` and `@Preview` annotations for automated screenshot generation and visual regression testing.
+
+#### Purpose
+
+- Ensure UI components render correctly under different data and edge cases.
+- Catch visual regressions early using automated screenshot comparison.
+- Improve UI stability and maintainability by visually documenting composable states.
+
+This setup is ideal for visual testing of Compose UI elements and layouts, providing confidence in design consistency across app versions.
+
+---
