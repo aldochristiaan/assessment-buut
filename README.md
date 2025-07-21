@@ -92,6 +92,8 @@ Allure results will be automatically fetched from the emulator by gradle task
 allure generate -c --single-file app/build/reports/allure-results -o allure-report --clean
 ```
 
+Results available at: `allure-report/index.html`
+
 ### 6. 🧼 Code Quality – SonarQube (Local Setup)
 
 This project supports **static code analysis** via **SonarQube**.
@@ -179,4 +181,88 @@ Runs on all PRs to main:
 - Screenshot test validation
 - Uploads all test artifacts
 
-Examoke : [PR validation](https://github.com/aldochristiaan/assessment-buut/actions/runs/16405543353)
+Example : [PR validation](https://github.com/aldochristiaan/assessment-buut/actions/runs/16405543353)
+
+### 8. Tests Explanation
+---
+
+
+#### CommentE2ETest
+
+This end-to-end test class validates the comment loading functionality and the display of the confirmation SnackBar in different screen orientations using Kaspresso and Jetpack Compose testing APIs.
+
+##### Tests
+
+- **`validateCommentAreLoadedAndSnackBarDisplayed`**  
+  Tests that when the reload button is clicked, the comments are successfully loaded and a SnackBar with the message `"Comments loaded!"` is displayed in **portrait** orientation.
+
+- **`validateCommentAreLoadedAndSnackBarDisplayedRotatedDevice`**  
+  Tests the same comment loading flow, but with the device rotated to **landscape** orientation, ensuring the UI behaves correctly under orientation changes.
+
+#### Description
+
+The tests combine Compose UI testing and device orientation control to verify UI behavior in real user scenarios. The `ScreenOrientationRule` enforces portrait orientation by default, with manual rotation applied in the landscape test.
+
+---
+
+
+#### Compose UI Tests for Comments Screen
+
+This suite of Compose UI tests verifies various UI states and interactions of the `CommentsListScreen` and individual comment items. The tests focus on UI element visibility, button click behavior, state updates, error handling, and content correctness.
+
+
+##### Tests Overview
+
+- **`validateFABisDisplayed`**  
+  Verifies that the "Comments" header and the reload button (identified by the tag `"reload_button"`) are displayed correctly.
+
+- **`validateButtonDisplayedAndClickable`**  
+  Checks that the reload button is displayed and clickable. Clicking the button triggers the expected callback.
+
+- **`validateButtonDisplayedAndNotClickable`**  
+  Validates that when the screen is in a loading state (`isLoading = true`), clicking the reload button does **not** trigger the callback.
+
+- **`validateSnackBaDisplayedAfterOnClick`**  
+  Simulates a button click that updates the UI state with sample comments. Verifies that one of the newly loaded comments is displayed on the screen.
+
+- **`validateErrorState`**  
+  Verifies that when the UI state contains an error message, the error message is displayed correctly on the screen.
+
+- **`validateCommentItemDetailsDisplayed`**  
+  Tests that an individual `CommentItem` displays the correct comment details: author name, email, and comment body.
+
+#### Description
+
+These tests leverage Jetpack Compose testing utilities (`createComposeRule()`) to set the UI content dynamically with various states and simulate user interactions. This ensures that UI components behave correctly across different scenarios including loading, error, and data display states.
+
+--- 
+
+#### Kaspresso Compose E2E Test with Page Object Pattern
+
+This test suite demonstrates an end-to-end UI test for the comments screen using **Kaspresso** with **Jetpack Compose** support, organized using the Page Object pattern for better readability and maintainability.
+
+##### `CommentScreen` Page Object
+
+- Encapsulates the main UI components by wrapping Compose semantics nodes:
+    - `reloadButton`: The reload button identified by the test tag `"reload_button"`.
+    - `commentItem`: Represents individual comment items with the test tag `"comment_item"`.
+    - `snackBar`: The Snackbar notification identified by `"snackBar"` tag.
+- The root view is identified by the test tag `"compose_main_screen"`.
+
+##### Test: `validateCommentLoaded`
+
+- Opens the `CommentScreen`.
+- Performs a click on the reload button and asserts it is displayed.
+- Uses `flakySafely` to retry steps for up to 10 seconds, accounting for asynchronous UI updates.
+- Verifies that the Snackbar with the expected localized text appears.
+- Confirms that at least one comment item is displayed after loading.
+
+##### Benefits
+
+- **Page Object Pattern** improves test readability and reusability by abstracting UI elements.
+- **Kaspresso's `flakySafely`** handles UI synchronization gracefully for flaky asynchronous events.
+- Integration with **Allure** reporting through forced Allure support in the Kaspresso builder.
+
+This approach ensures robust and maintainable UI tests for Compose-based Android apps.
+
+---
