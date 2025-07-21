@@ -7,11 +7,6 @@ plugins {
     alias(libs.plugins.sonarqube)
 }
 
-tasks.register("kotlinLintCheck") {
-    dependsOn("detekt")
-    group = "verification"
-}
-
 tasks.register("clean") {
     delete(layout.buildDirectory)
 }
